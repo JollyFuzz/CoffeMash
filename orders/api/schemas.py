@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
-from pydantic import BaseModel, conlist, conint, validator
+from pydantic import BaseModel, Extra, conlist, conint, validator
 from uuid import UUID
 
 
@@ -24,6 +24,9 @@ class OrderItemSchema(BaseModel):
     size: Size
     quantity: Optional[conint(ge=1, strict=True)] = 1
 
+    class Config:
+        extra = Extra.forbid
+
     @validator("quantity")
     def quantity_non_nullable(cls, value):
         if value is None:
@@ -33,6 +36,9 @@ class OrderItemSchema(BaseModel):
 
 class CreateOrderSchema(BaseModel):
     order: conlist(OrderItemSchema, min_items=1)
+
+    class Config:
+        extra = Extra.forbid
 
 
 class GetOrderSchema(CreateOrderSchema):
